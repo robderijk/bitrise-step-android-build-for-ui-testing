@@ -44,19 +44,12 @@ inputs:
       description: |
         Set the variant that you want to build. To see your available variants please open your project in Android Studio and go in [Project Structure] -> variants section.
       is_required: true
-  - apk_path_pattern: "*/build/outputs/aar/*.aar"
+  - apk_path_pattern: "*/build/outputs/apk/*.apk"
     opts:
       category: Options
       title: APK location pattern
       summary: Will find the APK files with the given pattern.
       description: Will find the APK files with the given pattern.
-      is_required: true
-  - test_apk_path_pattern: "*/build/outputs/apk/*.apk"
-    opts:
-      category: Options
-      title: Test APK location pattern
-      summary: Will find the Test APK files with the given pattern.
-      description: Will find the Test APK files with the given pattern.
       is_required: true
   - cache_level: "only_deps"
     opts:
