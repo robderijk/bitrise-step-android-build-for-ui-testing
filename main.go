@@ -26,13 +26,14 @@ const (
 
 // Configs ...
 type Configs struct {
-	ProjectLocation string `env:"project_location,dir"`
-	APKPathPattern  string `env:"apk_path_pattern"`
-	Variant         string `env:"variant,required"`
-	Module          string `env:"module,required"`
-	Arguments       string `env:"arguments"`
-	CacheLevel      string `env:"cache_level,opt[none,only_deps,all]"`
-	DeployDir       string `env:"BITRISE_DEPLOY_DIR,dir"`
+	ProjectLocation 	string `env:"project_location,dir"`
+	APKPathPattern  	string `env:"apk_path_pattern"`
+	TestAPKPathPattern  string `env:"test_apk_path_pattern"`
+	Variant         	string `env:"variant,required"`
+	Module          	string `env:"module,required"`
+	Arguments       	string `env:"arguments"`
+	CacheLevel      	string `env:"cache_level,opt[none,only_deps,all]"`
+	DeployDir       	string `env:"BITRISE_DEPLOY_DIR,dir"`
 }
 
 func getArtifacts(gradleProject gradle.Project, started time.Time, pattern string, includeModule bool) (artifacts []gradle.Artifact, err error) {
@@ -203,21 +204,33 @@ func mainE(config Configs) error {
 	fmt.Println()
 
 	apks, err := getArtifacts(gradleProject, started, config.APKPathPattern, false)
+	testApks, err2 := getArtifacts(gradleProject, started, config.TestAPKPathPattern, false)
 	if err != nil {
-		return fmt.Errorf("failed to find apks, error: %v", err)
+		return fmt.Errorf("failed to find app builds, error: %v", err)
+	}
+	if err2 != nil {
+		return fmt.Errorf("failed to find test builds, error: %v", err)
 	}
 
 	exportedArtifactPaths, err := exportArtifacts(apks, config.DeployDir)
+	exportedTestArtifactPaths, err2 := exportArtifacts(testApks, config.DeployDir)
 	if err != nil {
+		return fmt.Errorf("Failed to export artifact: %v", err)
+	}
+	if err2 != nil {
 		return fmt.Errorf("Failed to export artifact: %v", err)
 	}
 
 	var exportedAppArtifact string
 	var exportedTestArtifact string
-	for _, pth := range exportedArtifactPaths {
+	for _, pth := range exportedTestArtifactPaths {
 		if strings.HasSuffix(strings.ToLower(path.Base(pth)), strings.ToLower("AndroidTest.apk")) {
 			exportedTestArtifact = pth
-		} else {
+		}
+	}
+
+	for _, pth := range exportedArtifactPaths {
+		if !strings.HasSuffix(strings.ToLower(path.Base(pth)), strings.ToLower("AndroidTest.apk")) {
 			exportedAppArtifact = pth
 		}
 	}
