@@ -222,17 +222,15 @@ func mainE(config Configs) error {
 		}
 	}
 
-	if exportedAppArtifact == "" {
-		return fmt.Errorf("Could not find the exported app APK")
-	}
-
 	if exportedTestArtifact == "" {
 		return fmt.Errorf("Could not find the exported test APK")
 	}
 
 	fmt.Println()
-	if err := tools.ExportEnvironmentWithEnvman(apkEnvKey, exportedAppArtifact); err != nil {
-		return fmt.Errorf("Failed to export environment variable: %s", apkEnvKey)
+	if exportedAppArtifact != "" {
+		if err := tools.ExportEnvironmentWithEnvman(apkEnvKey, exportedAppArtifact); err != nil {
+			return fmt.Errorf("Failed to export environment variable: %s", apkEnvKey)
+		}
 	}
 	log.Printf("  Env    [ $%s = $BITRISE_DEPLOY_DIR/%s ]", apkEnvKey, filepath.Base(exportedAppArtifact))
 
