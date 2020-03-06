@@ -223,7 +223,7 @@ func mainE(config Configs) error {
 
 	var exportedAppArtifact string
 	var exportedTestArtifact string
-	for _, pth := range exportedTestArtifactPaths {
+	for _, pth := range exportedArtifactPaths {
 		if strings.HasSuffix(strings.ToLower(path.Base(pth)), strings.ToLower("AndroidTest.apk")) {
 			exportedTestArtifact = pth
 		}
@@ -244,10 +244,10 @@ func mainE(config Configs) error {
 	}
 
 	fmt.Println()
-	if err := tools.ExportEnvironmentWithEnvman(apkEnvKey, exportedAppArtifact); err != nil {
-		return fmt.Errorf("Failed to export environment variable: %s", apkEnvKey)
-	}
-	log.Printf("  Env    [ $%s = $BITRISE_DEPLOY_DIR/%s ]", apkEnvKey, filepath.Base(exportedAppArtifact))
+	// if err := tools.ExportEnvironmentWithEnvman(apkEnvKey, exportedAppArtifact); err != nil {
+	// 	return fmt.Errorf("Failed to export environment variable: %s", apkEnvKey)
+	// }
+	// log.Printf("  Env    [ $%s = $BITRISE_DEPLOY_DIR/%s ]", apkEnvKey, filepath.Base(exportedAppArtifact))
 
 	if err := tools.ExportEnvironmentWithEnvman(testApkEnvKey, exportedTestArtifact); err != nil {
 		return fmt.Errorf("Failed to export environment variable: %s", apkEnvKey)
